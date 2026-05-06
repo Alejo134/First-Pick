@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { ShoppingBag, ShoppingCart, Sparkles, LogIn, type LucideIcon } from 'lucide-react'
+import { ShoppingBag, ShoppingCart, Sparkles, LogIn, User, type LucideIcon } from 'lucide-react'
+import { useAuthStore } from '@/store/authStore'
+import { useCartStore } from '@/store/cartStore'
 
 interface NavItem {
   to: string
@@ -9,16 +11,22 @@ interface NavItem {
   end?: boolean
 }
 
-const links: NavItem[] = [
-  { to: '/',          label: 'Tienda',    icon: ShoppingBag,  end: true  },
-  { to: '/carrito',   label: 'Carrito',   icon: ShoppingCart, end: false },
-  { to: '/generador', label: 'Generador', icon: Sparkles,     end: false },
-  { to: '/login',     label: 'Ingresar',  icon: LogIn,        end: false },
-]
+function buildLinks(user: { name?: string } | null): NavItem[] {
+  return [
+    { to: '/',             label: 'Tienda',                    icon: ShoppingBag,  end: true  },
+    { to: '/carrito',      label: 'Carrito',                   icon: ShoppingCart, end: false },
+    { to: '/generador',    label: 'Generador',                 icon: Sparkles,     end: false },
+    { to: user ? '/mi-cuenta' : '/login',
+                           label: user ? 'Mi cuenta' : 'Ingresar',
+                           icon: user ? User : LogIn,          end: false },
+  ]
+}
 
 export default function Navbar() {
   const [expanded, setExpanded] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const user = useAuthStore(s => s.user)
+  const cartCount = useCartStore(s => s.count())
 
   return (
     <>
@@ -49,7 +57,7 @@ export default function Navbar() {
 
         {/* Links */}
         <nav className="flex flex-col gap-1">
-          {links.map(({ to, label, icon: Icon, end }) => (
+          {buildLinks(user).map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -125,7 +133,7 @@ export default function Navbar() {
         style={{ background: 'var(--color-bg-dark)' }}
         onClick={() => setMenuOpen(false)}
       >
-        {links.map(({ to, label, icon: Icon, end }) => (
+        {buildLinks(user).map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
@@ -135,7 +143,15 @@ export default function Navbar() {
               ${isActive ? 'text-[var(--color-accent-amber)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-inverse)]'}`
             }
           >
-            <Icon size={20} />
+            <div className="relative">
+              <Icon size={20} />
+              {to === '/carrito' && cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center"
+                  style={{ background: 'var(--color-accent)', color: 'var(--color-text-inverse)' }}>
+                  {cartCount}
+                </span>
+              )}
+            </div>
             {label}
           </NavLink>
         ))}

@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'tslib': path.resolve(__dirname, './src/shims/tslib.js'),
     },
   },
 })
