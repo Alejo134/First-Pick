@@ -72,11 +72,19 @@ export default function Navbar() {
             >
               {({ isActive }) => (
                 <>
-                  <Icon
-                    size={18}
-                    className="shrink-0 transition-colors duration-200"
-                    style={{ color: isActive ? 'var(--color-accent-amber)' : undefined }}
-                  />
+                  <div className="relative shrink-0">
+                    <Icon
+                      size={18}
+                      className="transition-colors duration-200"
+                      style={{ color: isActive ? 'var(--color-accent-amber)' : undefined }}
+                    />
+                    {to === '/carrito' && cartCount > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center"
+                        style={{ background: 'var(--color-accent)', color: 'var(--color-text-inverse)' }}>
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
                   <span
                     className="overflow-hidden transition-all duration-300"
                     style={{ opacity: expanded ? 1 : 0, maxWidth: expanded ? '120px' : '0px' }}
