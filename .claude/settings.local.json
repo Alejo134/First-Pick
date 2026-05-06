@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(del vite.config.js)",
+      "Bash(npm run *)"
+    ]
+  }
+}

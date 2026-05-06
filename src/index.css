@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "./config/theme.css";
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-text-inverse);
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+}

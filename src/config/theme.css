@@ -1,0 +1,39 @@
+@layer base {
+  :root {
+    /* ── Tipografía ─────────────────────────────── */
+    --font-brand: 'Fascinate', cursive;
+    --font-body:  'Poppins', sans-serif;
+
+    /* ── Backgrounds ────────────────────────────── */
+    --color-bg-primary:   #F0EBE0;   /* crema principal        */
+    --color-bg-secondary: #E5DDD0;   /* crema oscura           */
+    --color-bg-card:      #FDFAF5;   /* blanco cálido          */
+    --color-bg-dark:      #4A3830;   /* marrón cálido — nav    */
+
+    /* ── Text ───────────────────────────────────── */
+    --color-text-primary:   #1C1C2A; /* carbón oscuro          */
+    --color-text-secondary: #5C5248; /* marrón cálido          */
+    --color-text-muted:     #8A7F72; /* gris cálido            */
+    --color-text-inverse:   #F0EBE0; /* crema — sobre oscuros  */
+
+    /* ── Accent ─────────────────────────────────── */
+    --color-accent:         #C4622D; /* terracota / rust       */
+    --color-accent-hover:   #A84E22; /* rust oscuro            */
+    --color-accent-teal:    #2D7A6B; /* teal profundo          */
+    --color-accent-amber:   #E8922A; /* ámbar cálido           */
+    --color-accent-muted:   #C4622D22; /* rust translúcido     */
+
+    /* ── Borders ────────────────────────────────── */
+    --color-border:        #D4C9B8;  /* borde suave crema      */
+    --color-border-subtle: #EAE4D8;  /* borde muy sutil        */
+
+    /* ── Status ─────────────────────────────────── */
+    --color-success: #2D7A6B;        /* teal del logo          */
+    --color-warning: #E8922A;        /* ámbar del logo         */
+    --color-error:   #C4622D;        /* rust del logo          */
+
+    /* ── Layout ─────────────────────────────────── */
+    --navbar-collapsed: 64px;
+    --navbar-expanded:  200px;
+  }
+}
