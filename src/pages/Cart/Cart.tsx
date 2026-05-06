@@ -13,6 +13,8 @@ function CartRow({ item }: { item: CartItem }) {
   const remove    = useCartStore(s => s.remove)
   const updateQty = useCartStore(s => s.updateQty)
 
+  const atMax = item.quantity >= item.stock
+
   return (
     <div className="flex gap-4 py-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
 
@@ -40,6 +42,11 @@ function CartRow({ item }: { item: CartItem }) {
             <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
               Talle {item.size}{item.color ? ` · ${item.color}` : ''}
             </p>
+            {atMax && (
+              <p className="text-xs mt-1 font-medium" style={{ color: 'var(--color-warning)' }}>
+                Máximo disponible
+              </p>
+            )}
           </div>
           <button onClick={() => remove(item.variantId)} className="shrink-0 transition-opacity hover:opacity-60">
             <Trash2 size={14} style={{ color: 'var(--color-text-muted)' }} />
@@ -50,7 +57,7 @@ function CartRow({ item }: { item: CartItem }) {
           {/* Cantidad */}
           <div className="flex items-center border rounded-sm" style={{ borderColor: 'var(--color-border)' }}>
             <button
-              onClick={() => item.quantity > 1 ? updateQty(item.variantId, item.quantity - 1) : remove(item.variantId)}
+              onClick={() => updateQty(item.variantId, item.quantity - 1)}
               className="w-8 h-8 flex items-center justify-center transition-colors hover:bg-[var(--color-bg-secondary)]"
             >
               <Minus size={12} />
@@ -60,7 +67,12 @@ function CartRow({ item }: { item: CartItem }) {
             </span>
             <button
               onClick={() => updateQty(item.variantId, item.quantity + 1)}
-              className="w-8 h-8 flex items-center justify-center transition-colors hover:bg-[var(--color-bg-secondary)]"
+              disabled={atMax}
+              className="w-8 h-8 flex items-center justify-center transition-colors"
+              style={{
+                opacity: atMax ? 0.3 : 1,
+                cursor:  atMax ? 'not-allowed' : 'pointer',
+              }}
             >
               <Plus size={12} />
             </button>

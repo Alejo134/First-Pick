@@ -25,6 +25,7 @@ export interface CartItem {
   color?: string
   image: string
   quantity: number
+  stock: number   // stock máximo disponible en DB
 }
 
 export interface Order {

@@ -27,19 +27,32 @@ export default function Product() {
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [added, setAdded] = useState(false)
+  const [stockError, setStockError] = useState<string | null>(null)
+
+  const cartItem = useCartStore(s => s.items.find(i => i.variantId === selectedVariant?.id))
+  const qtyInCart = cartItem?.quantity ?? 0
 
   const handleAddToCart = () => {
     if (!product || !selectedVariant) return
-    addToCart({
-      variantId:  selectedVariant.id,
-      productId:  product.id,
-      name:       product.name,
-      price:      product.price,
-      size:       selectedVariant.size,
-      color:      selectedVariant.color,
-      image:      product.images[0] ?? '',
-      quantity:   1,
+    setStockError(null)
+
+    const result = addToCart({
+      variantId: selectedVariant.id,
+      productId: product.id,
+      name:      product.name,
+      price:     product.price,
+      size:      selectedVariant.size,
+      color:     selectedVariant.color,
+      image:     product.images[0] ?? '',
+      quantity:  1,
+      stock:     selectedVariant.stock,
     })
+
+    if (!result.ok) {
+      setStockError(result.message ?? 'Stock insuficiente.')
+      return
+    }
+
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
@@ -150,27 +163,57 @@ export default function Product() {
               </div>
             </div>
 
-            {/* Stock bajo */}
-            {selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock <= 3 && (
-              <p className="text-xs font-medium" style={{ color: 'var(--color-warning)' }}>
-                ¡Solo quedan {selectedVariant.stock} unidades!
+            {/* Info de stock */}
+            {selectedVariant && selectedVariant.stock > 0 && (
+              <div className="flex flex-col gap-1">
+                {selectedVariant.stock <= 3 && (
+                  <p className="text-xs font-medium" style={{ color: 'var(--color-warning)' }}>
+                    ¡Solo quedan {selectedVariant.stock} unidades!
+                  </p>
+                )}
+                {qtyInCart > 0 && (
+                  <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                    Ya tenés {qtyInCart} en el carrito · quedan {selectedVariant.stock - qtyInCart} disponibles
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Error de stock */}
+            {stockError && (
+              <p className="text-xs font-medium" style={{ color: 'var(--color-error)' }}>
+                {stockError}
               </p>
             )}
 
             {/* Botón agregar */}
-            <button
-              onClick={handleAddToCart}
-              disabled={!selectedVariant || outOfStock}
-              className="flex items-center justify-center gap-3 w-full py-4 text-sm font-semibold uppercase tracking-widest rounded-sm transition-all duration-200"
-              style={{
-                background:  added ? 'var(--color-accent-teal)' : (!selectedVariant || outOfStock) ? 'var(--color-border)' : 'var(--color-text-primary)',
-                color:       (!selectedVariant || outOfStock) ? 'var(--color-text-muted)' : 'var(--color-bg-primary)',
-                cursor:      (!selectedVariant || outOfStock) ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <ShoppingCart size={16} />
-              {added ? '¡Agregado!' : outOfStock ? 'Sin stock' : !selectedVariant ? 'Seleccioná un talle' : 'Agregar al carrito'}
-            </button>
+            {(() => {
+              const atLimit = !!selectedVariant && qtyInCart >= selectedVariant.stock
+              const disabled = !selectedVariant || outOfStock || atLimit
+              return (
+                <button
+                  onClick={handleAddToCart}
+                  disabled={disabled}
+                  className="flex items-center justify-center gap-3 w-full py-4 text-sm font-semibold uppercase tracking-widest rounded-sm transition-all duration-200"
+                  style={{
+                    background: added ? 'var(--color-accent-teal)' : disabled ? 'var(--color-border)' : 'var(--color-text-primary)',
+                    color:      disabled ? 'var(--color-text-muted)' : 'var(--color-bg-primary)',
+                    cursor:     disabled ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  <ShoppingCart size={16} />
+                  {added
+                    ? '¡Agregado!'
+                    : outOfStock
+                    ? 'Sin stock'
+                    : atLimit
+                    ? 'Stock máximo en carrito'
+                    : !selectedVariant
+                    ? 'Seleccioná un talle'
+                    : 'Agregar al carrito'}
+                </button>
+              )
+            })()}
 
           </div>
         </div>
