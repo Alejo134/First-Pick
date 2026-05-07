@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { ShoppingBag, ShoppingCart, Sparkles, LogIn, User, type LucideIcon } from 'lucide-react'
+import { ShoppingBag, ShoppingCart, Sparkles, LogIn, User, LayoutDashboard, type LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { useCartStore } from '@/store/cartStore'
+import { type User as UserType } from '@/types'
 
 interface NavItem {
   to: string
@@ -11,15 +12,22 @@ interface NavItem {
   end?: boolean
 }
 
-function buildLinks(user: { name?: string } | null): NavItem[] {
-  return [
-    { to: '/',             label: 'Tienda',                    icon: ShoppingBag,  end: true  },
-    { to: '/carrito',      label: 'Carrito',                   icon: ShoppingCart, end: false },
-    { to: '/generador',    label: 'Generador',                 icon: Sparkles,     end: false },
-    { to: user ? '/mi-cuenta' : '/login',
-                           label: user ? 'Mi cuenta' : 'Ingresar',
-                           icon: user ? User : LogIn,          end: false },
+function buildLinks(user: UserType | null): NavItem[] {
+  const links: NavItem[] = [
+    { to: '/',          label: 'Tienda',    icon: ShoppingBag,  end: true  },
+    { to: '/carrito',   label: 'Carrito',   icon: ShoppingCart, end: false },
+    { to: '/generador', label: 'Generador', icon: Sparkles,     end: false },
+    {
+      to:    user ? '/mi-cuenta' : '/login',
+      label: user ? 'Mi cuenta' : 'Ingresar',
+      icon:  user ? User : LogIn,
+      end:   false,
+    },
   ]
+  if (user?.role === 'admin') {
+    links.push({ to: '/admin', label: 'Admin', icon: LayoutDashboard, end: false })
+  }
+  return links
 }
 
 export default function Navbar() {
